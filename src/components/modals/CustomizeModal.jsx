@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { useTheme } from "../../context/ThemeContext";
-import { Modal, Label, Slider, ColorSwatchPicker } from "@heroui/react";
+import { Label, Slider, ColorSwatchPicker } from "@heroui/react";
 import { Pipette } from "lucide-react";
+import BaseModal from "./BaseModal";
 
 const presetColors = [
   "#F43F5E",
@@ -57,97 +58,90 @@ export function CustomizeModal({ isOpen, onOpenChange }) {
   };
 
   return (
-    <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
-      <Modal.Backdrop variant="transparent">
-        <Modal.Container placement="bottom">
-          <Modal.Dialog>
-            <Modal.CloseTrigger />
-            <Modal.Header>
-              <Modal.Heading className="flex items-center gap-2">
-                Customize Appearance
-              </Modal.Heading>
-            </Modal.Header>
+    <BaseModal
+      isOpen={isOpen}
+      onOpenChange={onOpenChange}
+      title="Customize Appearance"
+      placement="bottom"
+      backdropVariant="transparent"
+      bodyClassName="space-y-6 py-4"
+    >
+      <div>
+        <label className="text-sm font-medium mb-2 block text-foreground">
+          Accent Color
+        </label>
+        <div className="flex items-center gap-2">
+          <ColorSwatchPicker
+            value={isEyeDropperActive ? null : activeColor}
+            onChange={handleSwatchChange}
+          >
+            {presetColors.map((color) => (
+              <ColorSwatchPicker.Item key={color} color={color}>
+                <ColorSwatchPicker.Swatch />
+                <ColorSwatchPicker.Indicator />
+              </ColorSwatchPicker.Item>
+            ))}
+          </ColorSwatchPicker>
 
-            <Modal.Body className="space-y-6 py-4">
-              <div>
-                <label className="text-sm font-medium mb-2 block text-foreground">
-                  Accent Color
-                </label>
-                <div className="flex items-center gap-2">
-                  <ColorSwatchPicker
-                    value={isEyeDropperActive ? null : activeColor}
-                    onChange={handleSwatchChange}
-                  >
-                    {presetColors.map((color) => (
-                      <ColorSwatchPicker.Item key={color} color={color}>
-                        <ColorSwatchPicker.Swatch />
-                        <ColorSwatchPicker.Indicator />
-                      </ColorSwatchPicker.Item>
-                    ))}
-                  </ColorSwatchPicker>
+          <button
+            type="button"
+            onClick={handleEyeDropper}
+            style={{
+              backgroundColor: customColor,
+              boxShadow: isEyeDropperActive
+                ? `0 0 0 2px var(--bg-background, #fff), 0 0 0 4px ${customColor}`
+                : "none",
+            }}
+            className={`relative flex shrink-0 items-center justify-center rounded-full transition-all duration-200 hover:scale-105 ${
+              isEyeDropperActive ? "h-6 w-6 m-1" : "h-7 w-7"
+            }`}
+            title="Pick custom color"
+          >
+            <Pipette className="h-3.5 w-3.5 text-white drop-shadow-md" />
+          </button>
+        </div>
+      </div>
 
-                  <button
-                    type="button"
-                    onClick={handleEyeDropper}
-                    style={{
-                      backgroundColor: customColor,
-                      boxShadow: isEyeDropperActive
-                        ? `0 0 0 2px var(--bg-background, #fff), 0 0 0 4px ${customColor}`
-                        : "none",
-                    }}
-                    className={`relative flex shrink-0 items-center justify-center rounded-full transition-all duration-200 hover:scale-105 ${isEyeDropperActive ? "h-6 w-6 m-1" : "h-7 w-7"
-                      }`}
-                    title="Pick custom color"
-                  >
-                    <Pipette className="h-3.5 w-3.5 text-white drop-shadow-md" />
-                  </button>
-                </div>
-              </div>
+      <div className="w-full">
+        <Slider
+          className="w-full"
+          minValue={0}
+          maxValue={1}
+          step={0.05}
+          value={customization.opacity ?? 1}
+          onChange={(val) => updateCustomization("opacity", val)}
+        >
+          <div className="flex justify-between items-center mb-1">
+            <Label className="text-sm font-medium">Card Opacity</Label>
+            <Slider.Output className="text-sm font-medium" />
+          </div>
+          <Slider.Track>
+            <Slider.Fill />
+            <Slider.Thumb />
+          </Slider.Track>
+        </Slider>
+      </div>
 
-              <div className="w-full">
-                <Slider
-                  className="w-full"
-                  minValue={0}
-                  maxValue={1}
-                  step={0.05}
-                  value={customization.opacity ?? 1}
-                  onChange={(val) => updateCustomization("opacity", val)}
-                >
-                  <div className="flex justify-between items-center mb-1">
-                    <Label className="text-sm font-medium">Card Opacity</Label>
-                    <Slider.Output className="text-sm font-medium" />
-                  </div>
-                  <Slider.Track>
-                    <Slider.Fill />
-                    <Slider.Thumb />
-                  </Slider.Track>
-                </Slider>
-              </div>
-
-              <div className="w-full">
-                <Slider
-                  className="w-full"
-                  minValue={0}
-                  maxValue={40}
-                  step={1}
-                  value={customization.blur ?? 0}
-                  onChange={(val) => updateCustomization("blur", val)}
-                >
-                  <div className="flex justify-between items-center mb-1">
-                    <Label className="text-sm font-medium">Card Blur</Label>
-                    <Slider.Output className="text-sm font-medium" />
-                  </div>
-                  <Slider.Track>
-                    <Slider.Fill />
-                    <Slider.Thumb />
-                  </Slider.Track>
-                </Slider>
-              </div>
-            </Modal.Body>
-          </Modal.Dialog>
-        </Modal.Container>
-      </Modal.Backdrop>
-    </Modal>
+      <div className="w-full">
+        <Slider
+          className="w-full"
+          minValue={0}
+          maxValue={40}
+          step={1}
+          value={customization.blur ?? 0}
+          onChange={(val) => updateCustomization("blur", val)}
+        >
+          <div className="flex justify-between items-center mb-1">
+            <Label className="text-sm font-medium">Card Blur</Label>
+            <Slider.Output className="text-sm font-medium" />
+          </div>
+          <Slider.Track>
+            <Slider.Fill />
+            <Slider.Thumb />
+          </Slider.Track>
+        </Slider>
+      </div>
+    </BaseModal>
   );
 }
 

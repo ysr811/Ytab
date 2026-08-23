@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
-import { Modal, Button, Input } from "@heroui/react";
+import { Button, Input } from "@heroui/react";
+import BaseModal from "./BaseModal";
 
 export function RenameModal({
   isOpen,
@@ -47,50 +48,42 @@ export function RenameModal({
   const label = labels[itemType] || "Item";
 
   return (
-    <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
-      <Modal.Backdrop>
-        <Modal.Container placement="center">
-          <Modal.Dialog className="max-w-sm">
-            <Modal.CloseTrigger />
-            <Modal.Header>
-              <Modal.Heading>Rename {label}</Modal.Heading>
-            </Modal.Header>
-
-            <Modal.Body className="py-4">
-              <Input
-                ref={inputRef}
-                aria-label={`${label} name`}
-                placeholder={`Enter ${label.toLowerCase()} name...`}
-                value={name}
-                onChange={(e) => {
-                  setName(e.target.value);
-                  if (error) setError("");
-                }}
-                fullWidth={true}
-                onKeyDown={handleKeyDown}
-                isInvalid={!!error}
-                autoFocus
-                variant="secondary"
-              />
-              {error && <p className="text-xs text-danger mt-1">{error}</p>}
-            </Modal.Body>
-
-            <Modal.Footer className="flex justify-end gap-2 pt-2">
-              <Button variant="tertiary" onPress={() => onOpenChange(false)}>
-                Cancel
-              </Button>
-              <Button
-                variant="primary"
-                onPress={handleSubmit}
-                isDisabled={!name.trim() || name.trim() === currentName}
-              >
-                Rename
-              </Button>
-            </Modal.Footer>
-          </Modal.Dialog>
-        </Modal.Container>
-      </Modal.Backdrop>
-    </Modal>
+    <BaseModal
+      isOpen={isOpen}
+      onOpenChange={onOpenChange}
+      title={`Rename ${label}`}
+      footer={
+        <>
+          <Button variant="tertiary" onPress={() => onOpenChange(false)}>
+            Cancel
+          </Button>
+          <Button
+            variant="primary"
+            onPress={handleSubmit}
+            isDisabled={!name.trim() || name.trim() === currentName}
+          >
+            Rename
+          </Button>
+        </>
+      }
+    >
+      <Input
+        ref={inputRef}
+        aria-label={`${label} name`}
+        placeholder={`Enter ${label.toLowerCase()} name...`}
+        value={name}
+        onChange={(e) => {
+          setName(e.target.value);
+          if (error) setError("");
+        }}
+        fullWidth
+        onKeyDown={handleKeyDown}
+        isInvalid={!!error}
+        autoFocus
+        variant="secondary"
+      />
+      {error && <p className="text-xs text-danger mt-1">{error}</p>}
+    </BaseModal>
   );
 }
 

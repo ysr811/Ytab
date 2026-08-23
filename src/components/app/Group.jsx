@@ -13,7 +13,7 @@ import NotesWidget from "../widgets/NotesWidget";
 import RenameModal from "../modals/RenameModal";
 import EditSiteModal from "../modals/EditSiteModal";
 import { Button, Card, Dropdown, Label, toast } from "@heroui/react";
-import { EllipsisVertical, Trash2, Edit3, Plus, ExternalLink } from "lucide-react";
+import { EllipsisVertical, Trash2, Edit3, Plus } from "lucide-react";
 import { useBoardStore } from "../../hooks/useBoardStore";
 
 function customAnimateLayoutChanges(args) {
@@ -40,19 +40,6 @@ export const GroupCard = memo(function GroupCard({
   const deleteGroup = useBoardStore((state) => state.deleteGroup);
   const renameGroup = useBoardStore((state) => state.renameGroup);
   const addSiteToGroup = useBoardStore((state) => state.addSiteToGroup);
-
-  const handleOpenAllSites = () => {
-    if (!sites || sites.length === 0) {
-      toast.info("No sites in this group to open");
-      return;
-    }
-    sites.forEach((site) => {
-      if (site.url) {
-        window.open(site.url, "_blank", "noopener,noreferrer");
-      }
-    });
-    toast.success(`Opening ${sites.length} ${sites.length === 1 ? "site" : "sites"}`);
-  };
 
   if (type === "pomodoro") {
     return (
@@ -106,10 +93,10 @@ export const GroupCard = memo(function GroupCard({
           {...listeners}
           className="cursor-grab active:cursor-grabbing pb-2 select-none flex flex-row justify-between items-center"
         >
-          <Card.Title className="text-sm font-semibold truncate">{title}</Card.Title>
+          <Card.Title>{title}</Card.Title>
 
           <div
-            className={`flex items-center gap-1 transition-opacity duration-200 shrink-0 ${isMenuOpen
+            className={`flex items-center gap-1 transition-opacity duration-200 ${isMenuOpen
               ? "opacity-100"
               : "opacity-0 group-hover/card:opacity-100"
               }`}
@@ -146,9 +133,7 @@ export const GroupCard = memo(function GroupCard({
               <Dropdown.Popover placement="bottom left">
                 <Dropdown.Menu
                   onAction={(key) => {
-                    if (key === "open-all") {
-                      handleOpenAllSites();
-                    } else if (key === "rename") {
+                    if (key === "rename") {
                       setIsRenameOpen(true);
                     } else if (key === "delete") {
                       deleteGroup(id);
@@ -156,18 +141,6 @@ export const GroupCard = memo(function GroupCard({
                     }
                   }}
                 >
-                  <Dropdown.Item
-                    id="open-all"
-                    textValue="open-all"
-                    isDisabled={!sites || sites.length === 0}
-                  >
-                    <div className="flex items-center gap-2">
-                      <ExternalLink className="size-4" />
-                      <Label className="cursor-pointer capitalize">
-                        Open All Sites {sites?.length ? `(${sites.length})` : ""}
-                      </Label>
-                    </div>
-                  </Dropdown.Item>
                   <Dropdown.Item id="rename" textValue="rename">
                     <div className="flex items-center gap-2">
                       <Edit3 className="size-4" />

@@ -108,9 +108,14 @@ export const Columns = memo(
         onDragEnd={handleDragEnd}
       >
         <div className="w-full h-full min-h-[calc(100dvh-72px)] grid grid-cols-6 px-4">
-          {colIds.map((colId) => (
+          {colIds.map((colId, index) => (
             // Column reads its own items from the store — no items prop needed.
-            <Column key={colId} id={colId} />
+            <Column
+              key={colId}
+              id={colId}
+              index={index}
+              totalColumns={colIds.length}
+            />
           ))}
         </div>
 

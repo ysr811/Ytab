@@ -92,9 +92,8 @@ export function CustomizeModal({ isOpen, onOpenChange }) {
                 ? `0 0 0 2px var(--bg-background, #fff), 0 0 0 4px ${customColor}`
                 : "none",
             }}
-            className={`relative flex shrink-0 items-center justify-center rounded-full transition-all duration-200 hover:scale-105 ${
-              isEyeDropperActive ? "h-6 w-6 m-1" : "h-7 w-7"
-            }`}
+            className={`relative flex shrink-0 items-center justify-center rounded-full transition-all duration-200 hover:scale-105 ${isEyeDropperActive ? "h-6 w-6 m-1" : "h-7 w-7"
+              }`}
             title="Pick custom color"
           >
             <Pipette className="h-3.5 w-3.5 text-white drop-shadow-md" />

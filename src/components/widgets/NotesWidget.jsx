@@ -72,6 +72,7 @@ export const NotesWidget = memo(function NotesWidget({
   id,
   title = "Quick Note",
   content = "",
+  settings = {},
   isOverlay,
   attributes,
   listeners,
@@ -79,20 +80,36 @@ export const NotesWidget = memo(function NotesWidget({
 }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [text, setText] = useState(content);
-  const [isPreview, setIsPreview] = useState(false);
+  const [isPreview, setIsPreview] = useState(Boolean(settings?.isPreview));
   const [isRenameOpen, setIsRenameOpen] = useState(false);
   const textareaRef = useRef(null);
   const debounceRef = useRef(null); // debounce timer for store writes
+  const textRef = useRef(text);
+  textRef.current = text;
 
   const updateNoteContent = useBoardStore((s) => s.updateNoteContent);
+  const updateWidgetSettings = useBoardStore((s) => s.updateWidgetSettings);
   const renameGroup = useBoardStore((s) => s.renameGroup);
 
   useEffect(() => {
     setText(content);
   }, [content]);
 
+  useEffect(() => {
+    if (settings.isPreview !== undefined) {
+      setIsPreview(Boolean(settings.isPreview));
+    }
+  }, [settings.isPreview]);
+
   // Flush pending debounce on unmount so no writes are lost.
-  useEffect(() => () => clearTimeout(debounceRef.current), []);
+  useEffect(() => {
+    return () => {
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
+        updateNoteContent?.(id, textRef.current);
+      }
+    };
+  }, [id, updateNoteContent]);
 
   const autoResize = useCallback(() => {
     const el = textareaRef.current;
@@ -123,6 +140,13 @@ export const NotesWidget = memo(function NotesWidget({
     [autoResize, id, updateNoteContent],
   );
 
+  const handleTogglePreview = (e) => {
+    e.stopPropagation();
+    const nextVal = !isPreview;
+    setIsPreview(nextVal);
+    if (id) updateWidgetSettings(id, { isPreview: nextVal });
+  };
+
   const isEmpty = text.trim() === "";
 
   return (
@@ -149,10 +173,7 @@ export const NotesWidget = memo(function NotesWidget({
                 variant="ghost"
                 size="sm"
                 className="transition-opacity duration-200 shadow-none w-6 h-6 min-w-6 p-0"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setIsPreview((p) => !p);
-                }}
+                onClick={handleTogglePreview}
                 onMouseDown={(e) => e.stopPropagation()}
                 onPointerDown={(e) => e.stopPropagation()}
               >

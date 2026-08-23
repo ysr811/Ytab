@@ -16,50 +16,49 @@
   scrollbar-width: none;
 }
 
-@layer utilities {
-  .bg-card {
-    background-color: rgba(255, 255, 255, var(--card-opacity, 0.6)) !important;
-    backdrop-filter: blur(var(--card-blur, 12px)) !important;
-    -webkit-backdrop-filter: blur(var(--card-blur, 12px)) !important;
-    transform: translateZ(0) !important;
-  }
-  .bg-secondary {
-    background-color: rgba(255, 255, 255, calc(var(--card-opacity) + 0.2));
-  }
-  .text-secondary {
-    color: rgba(255, 255, 255, calc(var(--card-opacity) + 0.2));
-  }
-  .bg-accent {
-    background-color: var(--accent-color);
-  }
-  .text-accent {
-    color: var(--accent-color);
-  }
-  .border-accent {
-    border-color: var(--accent-color);
-  }
+.bg-card,
+.card,
+[data-slot="card"] {
+  background-color: rgba(255, 255, 255, var(--card-opacity, 0.6)) !important;
+  -webkit-backdrop-filter: blur(var(--card-blur, 12px)) !important;
+  backdrop-filter: blur(var(--card-blur, 12px)) !important;
 }
 
-@layer components {
-  .tabs__indicator {
-    box-shadow: none !important;
-    background-color: var(--accent-color);
-  }
+/* Secondary surfaces (items inside cards, tab bars) rely on the card's backdrop blur without triggering extra GPU passes */
+.bg-secondary {
+  background-color: rgba(255, 255, 255, 0.35) !important;
+}
 
-  .button--tertiary {
-    background-color: rgba(
-      255,
-      255,
-      255,
-      calc(var(--card-opacity) + 0.2)
-    ) !important;
-    backdrop-filter: blur(var(--card-blur, 12px)) !important;
-    -webkit-backdrop-filter: blur(var(--card-blur, 12px)) !important;
+.text-secondary {
+  color: rgba(255, 255, 255, calc(var(--card-opacity, 0.6) + 0.2));
+}
 
-    &:hover {
-      filter: brightness(0.9);
-    }
+.bg-accent {
+  background-color: var(--accent-color);
+}
+
+.text-accent {
+  color: var(--accent-color);
+}
+
+.border-accent {
+  border-color: var(--accent-color);
+}
+
+.tabs__indicator {
+  box-shadow: none !important;
+  background-color: var(--accent-color);
+}
+
+.button--tertiary {
+  background-color: rgba(255, 255, 255, 0.3) !important;
+  -webkit-backdrop-filter: blur(var(--card-blur, 12px)) !important;
+  backdrop-filter: blur(var(--card-blur, 12px)) !important;
+
+  &:hover {
+    filter: brightness(0.9);
   }
+}
   .button--primary {
     background-color: var(--accent-color) !important;
     color: #ffffff;
@@ -113,4 +112,3 @@
       }
     }
   }
-}

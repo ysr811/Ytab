@@ -21,7 +21,7 @@ export const Background = ({
 
   return (
     <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none select-none bg-black">
-      <div className="w-full h-full transition-all duration-300" style={containerStyle}>
+      <div className="w-full h-full transition-opacity duration-300" style={containerStyle}>
         {type === 'youtube' && ytId ? (
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
             <iframe
@@ -46,6 +46,9 @@ export const Background = ({
           <img
             src={url}
             alt="Background"
+            fetchPriority="high"
+            decoding="async"
+            loading="eager"
             className="w-full h-full object-cover"
           />
         )}

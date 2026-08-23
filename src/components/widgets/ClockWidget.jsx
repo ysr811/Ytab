@@ -1,13 +1,24 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, memo } from "react";
 import { Card, Button, Dropdown, Label, toast } from "@heroui/react";
 import { EllipsisVertical, Trash2, Clock, Calendar, Check } from "lucide-react";
+import { useBoardStore } from "../../hooks/useBoardStore";
 
-export function ClockWidget({ isOverlay, attributes, listeners, onDelete }) {
+export const ClockWidget = memo(function ClockWidget({
+  id,
+  settings = {},
+  isOverlay,
+  attributes,
+  listeners,
+  onDelete,
+}) {
   const [time, setTime] = useState(new Date());
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [showSeconds, setShowSeconds] = useState(false);
-  const [showDate, setShowDate] = useState(true);
-  const [is24Hour, setIs24Hour] = useState(false);
+
+  const updateWidgetSettings = useBoardStore((s) => s.updateWidgetSettings);
+
+  const showSeconds = settings.showSeconds ?? false;
+  const showDate = settings.showDate ?? true;
+  const is24Hour = settings.is24Hour ?? false;
 
   useEffect(() => {
     const timer = setInterval(() => setTime(new Date()), 1000);
@@ -64,11 +75,11 @@ export function ClockWidget({ isOverlay, attributes, listeners, onDelete }) {
               <Dropdown.Menu
                 onAction={(key) => {
                   if (key === "toggle-seconds") {
-                    setShowSeconds((prev) => !prev);
+                    updateWidgetSettings(id, { showSeconds: !showSeconds });
                   } else if (key === "toggle-24h") {
-                    setIs24Hour((prev) => !prev);
+                    updateWidgetSettings(id, { is24Hour: !is24Hour });
                   } else if (key === "toggle-date") {
-                    setShowDate((prev) => !prev);
+                    updateWidgetSettings(id, { showDate: !showDate });
                   } else if (key === "delete" && onDelete) {
                     onDelete();
                     toast.success("Widget deleted successfully");
@@ -153,6 +164,6 @@ export function ClockWidget({ isOverlay, attributes, listeners, onDelete }) {
       </Card.Content>
     </Card>
   );
-}
+});
 
 export default ClockWidget;

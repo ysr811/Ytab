@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef, useCallback, memo } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Card, Button, Dropdown, Label, toast } from "@heroui/react";
@@ -68,7 +68,7 @@ const mdComponents = {
 };
 
 // ── Component ────────────────────────────────────────────────────
-export function NotesWidget({
+export const NotesWidget = memo(function NotesWidget({
   id,
   title = "Quick Note",
   content = "",
@@ -280,6 +280,6 @@ export function NotesWidget({
       />
     </>
   );
-}
+});
 
 export default NotesWidget;

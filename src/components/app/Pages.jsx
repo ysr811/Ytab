@@ -8,9 +8,9 @@ import {
   PenLine,
   Trash2,
 } from "lucide-react";
-import { usePageStore } from "../hooks/usePageStore";
-import RenameModal from "./modals/RenameModal";
-import DeleteConfirmModal from "./modals/DeleteConfirmModal";
+import { usePageStore } from "../../hooks/usePageStore";
+import RenameModal from "../modals/RenameModal";
+import DeleteConfirmModal from "../modals/DeleteConfirmModal";
 
 const PageSettings = [
   { id: "rename-page", label: "Rename Page", icon: PenLine },
@@ -82,8 +82,8 @@ export function Pages() {
 
                   <div
                     className={`transition-all duration-200 ease-in-out ${showDropdown
-                        ? "w-6 opacity-100 scale-100 pointer-events-auto"
-                        : "w-0 opacity-0 scale-75 pointer-events-none overflow-hidden"
+                      ? "w-6 opacity-100 scale-100 pointer-events-auto"
+                      : "w-0 opacity-0 scale-75 pointer-events-none overflow-hidden"
                       }`}
                   >
                     <Dropdown onOpenChange={setIsMenuOpen}>

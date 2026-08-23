@@ -25,6 +25,10 @@ export const usePageStore = create(
           pages: [...state.pages, newPage],
           activePageId: newId,
         }));
+        
+        // Initialize the empty board structure for this new page
+        useBoardStore.getState().initBoard(newId);
+
         return newId;
       },
 

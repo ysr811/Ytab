@@ -6,16 +6,19 @@ import { usePageStore } from "./usePageStore";
 const WIDGET_TYPES = new Set(["pomodoro", "clock", "note"]);
 
 export function useBoardDnd() {
-  const activePageId = usePageStore((s) => s.activePageId);
-  const columns = useBoardStore((s) => s.boards[activePageId] ?? {});
-  const setColumns = useBoardStore((s) => s.setColumns);
   const [activeItem, setActiveItem] = useState(null);
   const [activeType, setActiveType] = useState(null);
 
-  // ── Helpers ──
+  // ── Helpers (read current board directly from store to keep callbacks stable) ──
+  const getColumns = useCallback(() => {
+    const activePageId = usePageStore.getState().activePageId;
+    return useBoardStore.getState().boards[activePageId] ?? {};
+  }, []);
+
   const findContainer = useCallback(
     (id) => {
       if (!id) return null;
+      const columns = getColumns();
       if (id in columns) return id;
       for (const colId of Object.keys(columns)) {
         if (columns[colId].some((g) => String(g.id) === String(id)))
@@ -29,11 +32,12 @@ export function useBoardDnd() {
       }
       return null;
     },
-    [columns],
+    [getColumns],
   );
 
   const findLocation = useCallback(
     (id, type) => {
+      const columns = getColumns();
       for (const colId of Object.keys(columns)) {
         for (const group of columns[colId]) {
           if (type === "group" && String(group.id) === String(id)) {
@@ -47,7 +51,7 @@ export function useBoardDnd() {
       }
       return null;
     },
-    [columns],
+    [getColumns],
   );
 
   // ── Handlers ──
@@ -74,6 +78,7 @@ export function useBoardDnd() {
         const targetCol = findContainer(over.id);
         if (!sourceCol || !targetCol || sourceCol === targetCol) return;
 
+        const setColumns = useBoardStore.getState().setColumns;
         setColumns((prev) => {
           const sourceItems = [...(prev[sourceCol] || [])];
           const targetItems = [...(prev[targetCol] || [])];
@@ -109,6 +114,7 @@ export function useBoardDnd() {
         if (!targetGroupObj || WIDGET_TYPES.has(targetGroupObj.type)) return;
         if (String(activeLoc.group.id) === String(targetGroupObj.id)) return;
 
+        const setColumns = useBoardStore.getState().setColumns;
         setColumns((prev) => {
           const next = { ...prev };
           let sourceGroup, targetGroup;
@@ -145,7 +151,7 @@ export function useBoardDnd() {
         });
       }
     },
-    [findContainer, findLocation, setColumns],
+    [findContainer, findLocation],
   );
 
   const handleDragEnd = useCallback(
@@ -156,15 +162,17 @@ export function useBoardDnd() {
       if (!over) return;
 
       const type = active.data.current?.type;
+      const columns = getColumns();
+      const setColumns = useBoardStore.getState().setColumns;
 
       if (type === "group") {
         const sourceCol = findContainer(active.id);
         const targetCol = findContainer(over.id);
         if (sourceCol && sourceCol === targetCol) {
-          const oldIndex = columns[sourceCol].findIndex(
+          const oldIndex = columns[sourceCol]?.findIndex(
             (g) => String(g.id) === String(active.id),
           );
-          const newIndex = columns[sourceCol].findIndex(
+          const newIndex = columns[sourceCol]?.findIndex(
             (g) => String(g.id) === String(over.id),
           );
           if (oldIndex !== -1 && newIndex !== -1 && oldIndex !== newIndex) {
@@ -183,10 +191,10 @@ export function useBoardDnd() {
           String(activeLoc.group.id) === String(overLoc.group.id)
         ) {
           const { group, colId } = activeLoc;
-          const oldIndex = group.sites.findIndex(
+          const oldIndex = group.sites?.findIndex(
             (s) => String(s.id) === String(active.id),
           );
-          const newIndex = group.sites.findIndex(
+          const newIndex = group.sites?.findIndex(
             (s) => String(s.id) === String(over.id),
           );
           if (oldIndex !== -1 && newIndex !== -1 && oldIndex !== newIndex) {
@@ -202,7 +210,7 @@ export function useBoardDnd() {
         }
       }
     },
-    [columns, findContainer, findLocation, setColumns],
+    [findContainer, findLocation, getColumns],
   );
 
   return {

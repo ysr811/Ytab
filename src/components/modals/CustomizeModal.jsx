@@ -104,9 +104,9 @@ export function CustomizeModal({ isOpen, onOpenChange }) {
                 </div>
               </div>
 
-              <div>
+              <div className="w-full">
                 <Slider
-                  className="w-full max-w-xs"
+                  className="w-full"
                   minValue={0}
                   maxValue={1}
                   step={0.05}
@@ -124,9 +124,9 @@ export function CustomizeModal({ isOpen, onOpenChange }) {
                 </Slider>
               </div>
 
-              <div>
+              <div className="w-full">
                 <Slider
-                  className="w-full max-w-xs"
+                  className="w-full"
                   minValue={0}
                   maxValue={40}
                   step={1}

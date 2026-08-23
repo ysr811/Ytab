@@ -7,14 +7,14 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { SiteItem } from "./SiteItem";
-import PomodoroWidget from "./widgets/PomodoroWidget";
-import ClockWidget from "./widgets/ClockWidget";
-import NotesWidget from "./widgets/NotesWidget";
-import RenameModal from "./modals/RenameModal";
-import EditSiteModal from "./modals/EditSiteModal";
+import PomodoroWidget from "../widgets/PomodoroWidget";
+import ClockWidget from "../widgets/ClockWidget";
+import NotesWidget from "../widgets/NotesWidget";
+import RenameModal from "../modals/RenameModal";
+import EditSiteModal from "../modals/EditSiteModal";
 import { Button, Card, Dropdown, Label, toast } from "@heroui/react";
 import { EllipsisVertical, Trash2, Edit3, Plus } from "lucide-react";
-import { useBoardStore } from "../hooks/useBoardStore";
+import { useBoardStore } from "../../hooks/useBoardStore";
 
 function customAnimateLayoutChanges(args) {
   const { isSorting, wasDragging } = args;
@@ -28,6 +28,7 @@ export const GroupCard = memo(function GroupCard({
   title,
   sites = [],
   content = "",
+  settings,
   attributes,
   listeners,
   isOverlay,
@@ -44,6 +45,7 @@ export const GroupCard = memo(function GroupCard({
     return (
       <PomodoroWidget
         id={id}
+        settings={settings}
         isOverlay={isOverlay}
         attributes={attributes}
         listeners={listeners}
@@ -56,6 +58,7 @@ export const GroupCard = memo(function GroupCard({
     return (
       <ClockWidget
         id={id}
+        settings={settings}
         isOverlay={isOverlay}
         attributes={attributes}
         listeners={listeners}
@@ -70,6 +73,7 @@ export const GroupCard = memo(function GroupCard({
         id={id}
         title={title}
         content={content}
+        settings={settings}
         isOverlay={isOverlay}
         attributes={attributes}
         listeners={listeners}
@@ -81,7 +85,7 @@ export const GroupCard = memo(function GroupCard({
   return (
     <>
       <Card
-        className={`group/card bg-card w-full min-h-32 p-3 transition-all duration-100 ease-in-out ${isOverlay ? "shadow-2xl scale-101" : "shadow-sm scale-100"
+        className={`group/card bg-card w-full min-h-32 p-3 transition-shadow duration-150 ${isOverlay ? "shadow-2xl scale-[1.01]" : "shadow-sm"
           }`}
       >
         <Card.Header
@@ -221,6 +225,7 @@ export const Group = memo(function Group(props) {
     transform: CSS.Translate.toString(transform),
     transition,
     opacity: isDragging ? 0.25 : 1,
+    willChange: isDragging ? "transform, opacity" : undefined,
   };
 
   return (
@@ -248,6 +253,7 @@ const SortableSiteItem = memo(function SortableSiteItem({ site }) {
     transform: CSS.Translate.toString(transform),
     transition,
     opacity: isDragging ? 0.25 : 1,
+    willChange: isDragging ? "transform, opacity" : undefined,
   };
 
   return (

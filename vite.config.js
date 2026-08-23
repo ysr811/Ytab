@@ -10,6 +10,7 @@ export default defineConfig({
     visualizer({ open: true, filename: "stats.html" }),
   ],
   build: {
+    target: "chrome100",
     rollupOptions: {
       output: {
         manualChunks(id) {

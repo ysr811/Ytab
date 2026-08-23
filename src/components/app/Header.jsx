@@ -12,7 +12,7 @@ import {
   Clock,
   StickyNote,
 } from "lucide-react";
-import { useBoardStore } from "../hooks/useBoardStore";
+import { useBoardStore } from "../../hooks/useBoardStore";
 import Pages from "./Pages";
 
 // ── Widget options in "Add Widget" dropdown ────────────────────────────────
@@ -27,7 +27,7 @@ const WIDGET_OPTIONS = [
 export function Logo() {
   return (
     <div className="font-bold text-xl tracking-wide shrink-0">
-      <img src="/logo.svg" alt="logo" className="w-20" />
+      <img src="/logo.svg" alt="YTab Logo" width="80" height="36" className="w-20 h-9" />
     </div>
   );
 }
@@ -82,7 +82,7 @@ export function Buttons({ onOpenSettings, onOpenCustomize }) {
 // ── Header ─────────────────────────────────────────────────────────────────
 function Header({ onOpenSettings, onOpenCustomize }) {
   return (
-    <header className="w-full flex items-center justify-start gap-6 px-6 py-4">
+    <header className="w-full h-18 flex items-center justify-start gap-6 px-6 py-4">
       <Logo />
       <div className="flex-1 min-w-0 flex justify-start">
         <Pages />

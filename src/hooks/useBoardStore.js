@@ -30,6 +30,12 @@ export const useBoardStore = create(
       boards: INITIAL_BOARDS,
 
       // --- Board Actions ---
+      initBoard: (pageId) =>
+        set((state) => {
+          if (state.boards[pageId]) return state;
+          return { boards: { ...state.boards, [pageId]: emptyBoard() } };
+        }),
+
       deleteBoard: (pageId) =>
         set((state) => {
           const newBoards = { ...state.boards };
@@ -59,12 +65,25 @@ export const useBoardStore = create(
           note: "Quick Note",
         };
 
+        const defaultSettings = {
+          clock: { showSeconds: false, showDate: true, is24Hour: false },
+          pomodoro: {
+            modeTimes: { focus: 25 * 60, break: 5 * 60 },
+            mode: "focus",
+            timeLeft: 25 * 60,
+            isAutoSwitch: false,
+            alarmSound: "digital",
+          },
+          note: { isPreview: false },
+        };
+
         const newItem = {
           id: Date.now(),
           title: titles[type] || "New Widget",
           type,
           sites: [],
           content: "",
+          settings: defaultSettings[type] || {},
         };
 
         set((state) => {
@@ -163,6 +182,21 @@ export const useBoardStore = create(
             updatedCols[colId] = cols[colId].map((g) =>
               String(g.id) === String(groupId)
                 ? { ...g, content: newContent }
+                : g,
+            );
+          }
+          return { boards: { ...state.boards, [pageId]: updatedCols } };
+        }),
+
+      updateWidgetSettings: (widgetId, newSettings) =>
+        set((state) => {
+          const pageId = usePageStore.getState().activePageId;
+          const cols = state.boards[pageId] ?? {};
+          const updatedCols = {};
+          for (const colId of Object.keys(cols)) {
+            updatedCols[colId] = cols[colId].map((g) =>
+              String(g.id) === String(widgetId)
+                ? { ...g, settings: { ...(g.settings || {}), ...newSettings } }
                 : g,
             );
           }

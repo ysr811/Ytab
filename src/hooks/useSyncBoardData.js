@@ -36,8 +36,6 @@ export function useSyncBoardData() {
       if (message.type === "NEW_TABS_SAVED") {
         processPendingGroups();
       }
-      // Return true if you want to respond asynchronously
-      return false;
     };
 
     if (

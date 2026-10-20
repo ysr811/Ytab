@@ -85,7 +85,7 @@ export const GroupCard = memo(function GroupCard({
   return (
     <>
       <Card
-        className={`group/card bg-card w-full min-h-32 p-3 transition-shadow duration-150 ${isOverlay ? "shadow-2xl scale-[1.01]" : "shadow-sm"
+        className={`group-card group/card bg-card w-full min-h-32 p-3 transition-shadow duration-150 ${isOverlay ? "shadow-2xl scale-[1.01]" : "shadow-sm"
           }`}
       >
         <Card.Header

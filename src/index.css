@@ -27,6 +27,8 @@
 /* Secondary surfaces (items inside cards, tab bars) rely on the card's backdrop blur without triggering extra GPU passes */
 .bg-secondary {
   background-color: rgba(255, 255, 255, 0.35) !important;
+  -webkit-backdrop-filter: blur(var(--card-blur, 12px)) !important;
+  backdrop-filter: blur(var(--card-blur, 12px)) !important;
 }
 
 .text-secondary {
@@ -50,68 +52,74 @@
   background-color: var(--accent-color);
 }
 
-.button--tertiary {
-  background-color: rgba(255, 255, 255, 0.3) !important;
+.button--tertiary,
+header button,
+.site-card,
+.group-card {
   -webkit-backdrop-filter: blur(var(--card-blur, 12px)) !important;
   backdrop-filter: blur(var(--card-blur, 12px)) !important;
+}
+
+.button--tertiary {
+  background-color: rgba(255, 255, 255, 0.3) !important;
 
   &:hover {
     filter: brightness(0.9);
   }
 }
-  .button--primary {
-    background-color: var(--accent-color) !important;
-    color: #ffffff;
+.button--primary {
+  background-color: var(--accent-color) !important;
+  color: #ffffff;
 
-    &:hover {
-      filter: brightness(0.9);
-    }
+  &:hover {
+    filter: brightness(0.9);
+  }
+}
+
+.input--primary,
+.input--secondary {
+  &:focus,
+  &[data-focused="true"] {
+    border-color: var(--accent-color) !important;
+    --tw-ring-color: var(--accent-color) !important;
+  }
+}
+
+.slider {
+  .slider__fill,
+  .slider__thumb {
+    background-color: var(--accent-color);
   }
 
-  .input--primary,
-  .input--secondary {
-    &:focus,
-    &[data-focused="true"] {
-      border-color: var(--accent-color) !important;
-      --tw-ring-color: var(--accent-color) !important;
-    }
-  }
-
-  .slider {
-    .slider__fill,
-    .slider__thumb {
-      background-color: var(--accent-color);
-    }
-
-    &[data-orientation="horizontal"] {
-      .slider__track {
-        .slider__fill {
-          left: auto !important;
-          right: 0 !important;
-          transform-origin: right center;
-        }
-
-        &[data-fill-start="true"] {
-          border-inline-end-color: var(--accent-color) !important;
-          border-inline-start-color: transparent !important;
-        }
-
-        &[data-fill-end="true"] {
-          border-inline-start-color: var(--accent-color) !important;
-          border-inline-end-color: var(--accent-color) !important;
-        }
+  &[data-orientation="horizontal"] {
+    .slider__track {
+      .slider__fill {
+        left: 0 !important;
+        right: auto !important;
+        transform-origin: right center;
       }
-    }
 
-    &[data-orientation="vertical"] .slider__track {
       &[data-fill-start="true"] {
-        border-bottom-color: var(--accent-color) !important;
+        border-inline-start-color: var(--accent-color) !important;
+        border-inline-end-color: transparent !important;
       }
+
       &[data-fill-end="true"] {
-        border-top-color: var(--accent-color) !important;
+        border-inline-start-color: var(--accent-color) !important;
+        border-inline-end-color: var(--accent-color) !important;
       }
     }
   }
+
+  &[data-orientation="vertical"] .slider__track {
+    &[data-fill-start="true"] {
+      border-bottom-color: var(--accent-color) !important;
+    }
+    &[data-fill-end="true"] {
+      border-top-color: var(--accent-color) !important;
+    }
+  }
+}
 
 @keyframes column-slide-in-down {
   from {

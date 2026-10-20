@@ -28,7 +28,7 @@ export const SiteItem = memo(function SiteItem({
     <>
       <Card
         onClick={handleClick}
-        className={`bg-secondary group/site w-full p-2 cursor-pointer rounded-xl transition-shadow duration-150 select-none ${isOverlay ? "shadow-md scale-[1.01]" : "shadow-none"
+        className={`site-card bg-secondary group/site w-full p-2 cursor-pointer rounded-xl transition-shadow duration-150 select-none ${isOverlay ? "shadow-md scale-[1.01]" : "shadow-none"
           }`}
       >
         <div className={`flex gap-2 ${description ? "items-start" : "items-center"}`}>

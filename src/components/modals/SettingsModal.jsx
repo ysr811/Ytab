@@ -1,18 +1,27 @@
 import { useState, useEffect } from "react";
-import { Button, ListBox, Select } from "@heroui/react";
+import {
+  Button,
+  ListBox,
+  Select,
+  Label,
+  Slider,
+  ColorSwatchPicker,
+} from "@heroui/react";
 import { ArrowUp, ArrowDown, Trash2, Plus } from "lucide-react";
 import BaseModal from "./BaseModal";
 import { useTheme } from "../../context/ThemeContext";
 
-const ACCENT_SURFACE_STYLE = {
-  backgroundColor: "color-mix(in oklab, var(--accent-color) 16%, transparent)",
-};
-
-const ACCENT_BORDER_STYLE = {
-  borderColor: "color-mix(in oklab, var(--accent-color) 30%, transparent)",
-};
-
 const DEFAULT_FONT_STACK = ["system-ui", "sans-serif"];
+
+const presetColors = [
+  "#F43F5E",
+  "#D946EF",
+  "#8B5CF6",
+  "#3B82F6",
+  "#06B6D4",
+  "#10B981",
+  "#84CC16",
+];
 
 function FontRow({ name, index, total, onMoveUp, onMoveDown, onRemove }) {
   return (
@@ -73,9 +82,11 @@ export function SettingsModal({ isOpen, onOpenChange }) {
   const [loadingFonts, setLoadingFonts] = useState(false);
   const [loadError, setLoadError] = useState(null);
 
+  const activeColor = customization.accentColor || presetColors[0];
+
   useEffect(() => {
     updateCustomization("fontFamily", fonts.join(", "));
-  }, [fonts]);
+  }, [fonts, updateCustomization]);
 
   const loadDeviceFonts = async () => {
     if (!("queryLocalFonts" in window)) {
@@ -115,6 +126,12 @@ export function SettingsModal({ isOpen, onOpenChange }) {
     setFonts((prev) => prev.filter((_, i) => i !== index));
   };
 
+  const handleSwatchChange = (colorValue) => {
+    if (!colorValue) return;
+    const hex = colorValue.toString();
+    updateCustomization("accentColor", hex);
+  };
+
   const addableFonts = availableFonts.filter((f) => !fonts.includes(f));
 
   return (
@@ -122,7 +139,8 @@ export function SettingsModal({ isOpen, onOpenChange }) {
       isOpen={isOpen}
       onOpenChange={onOpenChange}
       title={<span className="flex items-center gap-2.5">Settings</span>}
-      className="max-w-xl border border-white/40 bg-card shadow-2xl"
+      className="max-w-xl border border-white/40 shadow-2xl"
+      style={{ backgroundColor: "rgba(255, 255, 255, 0.96)", backdropFilter: "none" }}
       bodyClassName="space-y-4 py-4"
       backdropVariant="blur"
       stopPropagation
@@ -131,11 +149,98 @@ export function SettingsModal({ isOpen, onOpenChange }) {
           Done
         </Button>
       }>
+      <section aria-labelledby="settings-customization-heading">
+        <div className="mb-3 flex flex-col gap-1">
+          <h3
+            id="settings-customization-heading"
+            className="text-[11px] font-semibold tracking-[0.14em] text-foreground uppercase">
+            Customization
+          </h3>
+          <p className="mb-2 text-sm text-foreground/60">
+            Customize the appearance of the extension.
+          </p>
+        </div>
+
+        <div className="divide-y divide-black/5 overflow-hidden rounded-xl border border-white/40 bg-secondary shadow-sm">
+          <div className="px-4 py-3.5">
+            <label className="text-sm font-medium mb-2 block text-foreground">
+              Accent Color
+            </label>
+            <div className="flex items-center gap-2">
+              <ColorSwatchPicker
+                value={activeColor}
+                onChange={handleSwatchChange}>
+                {presetColors.map((color) => (
+                  <ColorSwatchPicker.Item key={color} color={color}>
+                    <ColorSwatchPicker.Swatch />
+                    <ColorSwatchPicker.Indicator />
+                  </ColorSwatchPicker.Item>
+                ))}
+              </ColorSwatchPicker>
+
+              <input
+                type="color"
+                value={activeColor}
+                onChange={(e) => updateCustomization("accentColor", e.target.value)}
+                className="h-8 w-8 cursor-pointer rounded-full border border-white/40 bg-transparent p-0"
+                style={{ borderRadius: "9999px", overflow: "hidden" }}
+                title="Pick custom color"
+              />
+            </div>
+          </div>
+
+          <div className="px-4 py-3.5">
+            <Slider
+              className="w-full"
+              minValue={0}
+              maxValue={1}
+              step={0.05}
+              value={customization.opacity ?? 1}
+              onChange={(val) =>
+                updateCustomization(
+                  "opacity",
+                  Array.isArray(val) ? val[0] : val
+                )
+              }>
+              <div className="flex justify-between items-center mb-1">
+                <Label className="text-sm font-medium">Card Opacity</Label>
+                <Slider.Output className="text-sm font-medium" />
+              </div>
+              <Slider.Track>
+                <Slider.Fill />
+                <Slider.Thumb />
+              </Slider.Track>
+            </Slider>
+          </div>
+
+          <div className="px-4 py-3.5">
+            <Slider
+              className="w-full"
+              minValue={0}
+              maxValue={40}
+              step={1}
+              value={customization.blur ?? 0}
+              onChange={(val) =>
+                updateCustomization("blur", Array.isArray(val) ? val[0] : val)
+              }>
+              <div className="flex justify-between items-center mb-1">
+                <Label className="text-sm font-medium">Card Blur</Label>
+                <Slider.Output className="text-sm font-medium" />
+              </div>
+              <Slider.Track>
+                <Slider.Fill />
+                <Slider.Thumb />
+              </Slider.Track>
+            </Slider>
+          </div>
+        </div>
+      </section>
+
       <section aria-labelledby="settings-fonts-heading">
         <div className="mb-3 flex flex-col gap-1">
           <h3
             id="settings-fonts-heading"
-            className="text-[11px] font-semibold tracking-[0.14em] text-foreground/80 uppercase">
+            className="text-[11px] font-semibold tracking-[0.14em] text-foreground uppercase">
             Fonts
           </h3>
           <p className="mb-2 text-sm text-foreground/60">
@@ -206,7 +311,7 @@ export function SettingsModal({ isOpen, onOpenChange }) {
           )}
         </div>
 
-        <p className="mt-3 text-xs leading-relaxed text-foreground/55">
+        <p className="mt-3 text-xs leading-relaxed text-foreground/80">
           Fonts are tried in order — if a font is not available for a language,
           the next one is used.
         </p>

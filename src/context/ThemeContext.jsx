@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
 
 const ThemeContext = createContext();
 
@@ -17,9 +17,9 @@ export const ThemeProvider = ({ children }) => {
     return saved ? JSON.parse(saved) : DEFAULT_CUSTOMIZATION;
   });
 
-  const updateCustomization = (key, value) => {
+  const updateCustomization = useCallback((key, value) => {
     setCustomization((prev) => ({ ...prev, [key]: value }));
-  };
+  }, []);
 
   useEffect(() => {
     const root = document.documentElement;

@@ -2,7 +2,6 @@ import { useState, useRef } from "react";
 import { Toast } from "@heroui/react";
 import Header from "./components/app/Header";
 import Columns from "./components/app/Columns";
-import CustomizeModal from "./components/modals/CustomizeModal";
 import SettingsModal from "./components/modals/SettingsModal";
 import { Background } from "./components/app/Background";
 import { ThemeProvider, useTheme } from "./context/ThemeContext";
@@ -11,7 +10,6 @@ import { useSyncBoardData } from "./hooks/useSyncBoardData";
 function MainContent() {
   const columnsRef = useRef(null);
   const { globalStyles } = useTheme();
-  const [isCustomizeOpen, setIsCustomizeOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   useSyncBoardData();
@@ -20,26 +18,16 @@ function MainContent() {
     setIsSettingsOpen(true);
   };
 
-  const handleOpenCustomize = () => {
-    setIsCustomizeOpen(true);
-  };
-
   return (
     <main className="min-h-screen w-full">
       <Header
         onOpenSettings={handleOpenSettings}
-        onOpenCustomize={handleOpenCustomize}
         globalStyles={globalStyles}
       />
 
       <Columns ref={columnsRef} globalStyles={globalStyles} />
 
       <Toast.Provider />
-
-      <CustomizeModal
-        isOpen={isCustomizeOpen}
-        onOpenChange={setIsCustomizeOpen}
-      />
 
       <SettingsModal
         isOpen={isSettingsOpen}

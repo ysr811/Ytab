@@ -16,6 +16,7 @@ export function BaseModal({
   bodyClassName = "py-4",
   headerClassName,
   footerClassName = "flex justify-end gap-2 pt-2",
+  style,
   stopPropagation = false,
 }) {
   const handleStopPropagation = (e) => {
@@ -30,6 +31,7 @@ export function BaseModal({
         <Modal.Container placement={placement}>
           <Modal.Dialog
             className={className}
+            style={style}
             onKeyDown={handleStopPropagation}
             onPointerDown={handleStopPropagation}
             onMouseDown={handleStopPropagation}

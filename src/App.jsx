@@ -3,6 +3,7 @@ import { Toast } from "@heroui/react";
 import Header from "./components/app/Header";
 import Columns from "./components/app/Columns";
 import CustomizeModal from "./components/modals/CustomizeModal";
+import SettingsModal from "./components/modals/SettingsModal";
 import { Background } from "./components/app/Background";
 import { ThemeProvider, useTheme } from "./context/ThemeContext";
 import { useSyncBoardData } from "./hooks/useSyncBoardData";
@@ -11,12 +12,12 @@ function MainContent() {
   const columnsRef = useRef(null);
   const { globalStyles } = useTheme();
   const [isCustomizeOpen, setIsCustomizeOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   useSyncBoardData();
 
   const handleOpenSettings = () => {
-    setModalVariant("complex");
-    setIsModalOpen(true);
+    setIsSettingsOpen(true);
   };
 
   const handleOpenCustomize = () => {
@@ -38,6 +39,11 @@ function MainContent() {
       <CustomizeModal
         isOpen={isCustomizeOpen}
         onOpenChange={setIsCustomizeOpen}
+      />
+
+      <SettingsModal
+        isOpen={isSettingsOpen}
+        onOpenChange={setIsSettingsOpen}
       />
 
       <Background

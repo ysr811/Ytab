@@ -8,6 +8,10 @@ const DEFAULT_CUSTOMIZATION = {
   blur: 12,
   fontFamily: "system-ui, sans-serif",
   backgroundImages: [],
+  hideLogo: false,
+  hideYTabLogo: false,
+  hideAbout: false,
+  hideAboutButton: false,
 };
 
 export const ThemeProvider = ({ children }) => {

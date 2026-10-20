@@ -88,7 +88,11 @@ export function SettingsModal({ isOpen, onOpenChange }) {
 
   const activeColor = customization.accentColor || presetColors[0];
 
-  const { images: backgroundImages, addImages, removeImage } = useBackgroundImages();
+  const {
+    images: backgroundImages,
+    addImages,
+    removeImage,
+  } = useBackgroundImages();
 
   useEffect(() => {
     updateCustomization("fontFamily", fonts.join(", "));
@@ -156,8 +160,8 @@ export function SettingsModal({ isOpen, onOpenChange }) {
             reader.onload = () => resolve(reader.result);
             reader.onerror = reject;
             reader.readAsDataURL(file);
-          })
-      )
+          }),
+      ),
     );
     addImages(dataUrls);
     if (fileInputRef.current) fileInputRef.current.value = "";
@@ -175,7 +179,10 @@ export function SettingsModal({ isOpen, onOpenChange }) {
       onOpenChange={onOpenChange}
       title={<span className="flex items-center gap-2.5">Settings</span>}
       className="max-w-xl border border-white/40 shadow-2xl"
-      style={{ backgroundColor: "rgba(255, 255, 255, 0.96)", backdropFilter: "none" }}
+      style={{
+        backgroundColor: "rgba(255, 255, 255, 0.96)",
+        backdropFilter: "none",
+      }}
       bodyClassName="space-y-4 py-4"
       backdropVariant="blur"
       stopPropagation
@@ -184,6 +191,79 @@ export function SettingsModal({ isOpen, onOpenChange }) {
           Done
         </Button>
       }>
+      <section aria-labelledby="settings-visibility-heading">
+        <div className="mb-3 flex flex-col gap-1">
+          <h3
+            id="settings-visibility-heading"
+            className="text-[11px] font-semibold tracking-[0.14em] text-foreground uppercase">
+            Visibility
+          </h3>
+          <p className="mb-2 text-sm text-foreground/60">
+            Show or hide UI elements.
+          </p>
+        </div>
+
+        <div className="divide-y divide-black/5 overflow-hidden rounded-xl border border-white/40 bg-secondary shadow-sm">
+          <label className="flex items-center justify-between gap-4 px-4 py-3.5 cursor-pointer">
+            <span className="text-sm font-medium text-foreground">
+              Hide YTab Logo
+            </span>
+            <span className="relative inline-block">
+              <input
+                type="checkbox"
+                checked={
+                  !!(
+                    customization?.hideLogo ||
+                    customization?.hideYTabLogo ||
+                    customization?.hideYtabLogo ||
+                    customization?.hideLogoYTab
+                  )
+                }
+                onChange={(e) => {
+                  const value = e.target.checked;
+                  [
+                    "hideLogo",
+                    "hideYTabLogo",
+                    "hideYtabLogo",
+                    "hideLogoYTab",
+                  ].forEach((k) => updateCustomization(k, value));
+                }}
+                className="peer sr-only"
+              />
+              <span className="block h-6 w-11 rounded-full bg-gray-300 transition-colors peer-checked:bg-[var(--accent-color)]" />
+              <span className="pointer-events-none absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform peer-checked:translate-x-5" />
+            </span>
+          </label>
+
+          <label className="flex items-center justify-between gap-4 px-4 py-3.5 cursor-pointer">
+            <span className="text-sm font-medium text-foreground">
+              Hide About Button
+            </span>
+            <span className="relative inline-block">
+              <input
+                type="checkbox"
+                checked={
+                  !!(
+                    customization?.hideAbout ||
+                    customization?.hideAboutButton ||
+                    customization?.hideAboutBtn
+                  )
+                }
+                onChange={(e) => {
+                  const value = e.target.checked;
+                  ["hideAbout", "hideAboutButton", "hideAboutBtn"].forEach((k) =>
+                    updateCustomization(k, value),
+                  );
+                }}
+                className="peer sr-only"
+              />
+              <span className="block h-6 w-11 rounded-full bg-gray-300 transition-colors peer-checked:bg-[var(--accent-color)]" />
+              <span className="pointer-events-none absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform peer-checked:translate-x-5" />
+            </span>
+          </label>
+        </div>
+      </section>
+
       <section aria-labelledby="settings-customization-heading">
         <div className="mb-3 flex flex-col gap-1">
           <h3
@@ -216,9 +296,10 @@ export function SettingsModal({ isOpen, onOpenChange }) {
               <input
                 type="color"
                 value={activeColor}
-                onChange={(e) => updateCustomization("accentColor", e.target.value)}
-                className="h-8 w-8 cursor-pointer rounded-full border border-white/40 bg-transparent p-0"
-                style={{ borderRadius: "9999px", overflow: "hidden" }}
+                onChange={(e) =>
+                  updateCustomization("accentColor", e.target.value)
+                }
+                className="h-8 w-8 cursor-pointer border border-white/40 bg-transparent p-0 rounded-xl"
                 title="Pick custom color"
               />
             </div>
@@ -234,7 +315,7 @@ export function SettingsModal({ isOpen, onOpenChange }) {
               onChange={(val) =>
                 updateCustomization(
                   "opacity",
-                  Array.isArray(val) ? val[0] : val
+                  Array.isArray(val) ? val[0] : val,
                 )
               }>
               <div className="flex justify-between items-center mb-1">

@@ -7,6 +7,7 @@ const DEFAULT_CUSTOMIZATION = {
   opacity: 0.6,
   blur: 12,
   fontFamily: "system-ui, sans-serif",
+  backgroundImages: [],
 };
 
 export const ThemeProvider = ({ children }) => {

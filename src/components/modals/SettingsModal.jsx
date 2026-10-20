@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Button,
   ListBox,
@@ -7,9 +7,10 @@ import {
   Slider,
   ColorSwatchPicker,
 } from "@heroui/react";
-import { ArrowUp, ArrowDown, Trash2, Plus } from "lucide-react";
+import { ArrowUp, ArrowDown, Trash2, Plus, ImageIcon, X } from "lucide-react";
 import BaseModal from "./BaseModal";
 import { useTheme } from "../../context/ThemeContext";
+import { useBackgroundImages } from "../../hooks/useBackgroundImages";
 
 const DEFAULT_FONT_STACK = ["system-ui", "sans-serif"];
 
@@ -82,7 +83,12 @@ export function SettingsModal({ isOpen, onOpenChange }) {
   const [loadingFonts, setLoadingFonts] = useState(false);
   const [loadError, setLoadError] = useState(null);
 
+  const [imageUrl, setImageUrl] = useState("");
+  const fileInputRef = useRef(null);
+
   const activeColor = customization.accentColor || presetColors[0];
+
+  const { images: backgroundImages, addImages, removeImage } = useBackgroundImages();
 
   useEffect(() => {
     updateCustomization("fontFamily", fonts.join(", "));
@@ -130,6 +136,35 @@ export function SettingsModal({ isOpen, onOpenChange }) {
     if (!colorValue) return;
     const hex = colorValue.toString();
     updateCustomization("accentColor", hex);
+  };
+
+  const addImageUrl = () => {
+    const url = imageUrl.trim();
+    if (!url) return;
+    addImages([url]);
+    setImageUrl("");
+  };
+
+  const handleFilesSelected = async (e) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+    const dataUrls = await Promise.all(
+      files.map(
+        (file) =>
+          new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+          })
+      )
+    );
+    addImages(dataUrls);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  const handleRemoveImage = (index) => {
+    removeImage(index);
   };
 
   const addableFonts = availableFonts.filter((f) => !fonts.includes(f));
@@ -232,6 +267,78 @@ export function SettingsModal({ isOpen, onOpenChange }) {
                 <Slider.Thumb />
               </Slider.Track>
             </Slider>
+          </div>
+        </div>
+      </section>
+
+      <section aria-labelledby="settings-background-heading">
+        <div className="mb-3 flex flex-col gap-1">
+          <h3
+            id="settings-background-heading"
+            className="text-[11px] font-semibold tracking-[0.14em] text-foreground uppercase">
+            Background Image
+          </h3>
+          <p className="mb-2 text-sm text-foreground/60">
+            Add images to rotate through on every new tab.
+          </p>
+        </div>
+
+        <div className="overflow-hidden rounded-xl border border-white/40 bg-secondary shadow-sm">
+          <div className="px-4 py-3.5">
+            <div className="mb-3 flex items-center gap-2">
+              <input
+                type="text"
+                value={imageUrl}
+                onChange={(e) => setImageUrl(e.target.value)}
+                placeholder="Paste an image URL…"
+                className="flex-1 rounded-full border border-white/40 bg-white/60 px-3 py-1.5 text-sm text-foreground outline-none focus:border-accent"
+              />
+              <Button variant="secondary" onPress={addImageUrl}>
+                <Plus className="size-4" />
+                Add URL
+              </Button>
+              <Button
+                variant="secondary"
+                onPress={() => fileInputRef.current?.click()}>
+                <ImageIcon className="size-4" />
+                Upload
+              </Button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                multiple
+                className="hidden"
+                onChange={handleFilesSelected}
+              />
+            </div>
+
+            {backgroundImages.length === 0 ? (
+              <div className="py-6 text-center text-sm text-foreground/60">
+                No background images. Add one above.
+              </div>
+            ) : (
+              <div className="grid grid-cols-3 gap-3">
+                {backgroundImages.map((src, index) => (
+                  <div
+                    key={`${src}-${index}`}
+                    className="group relative overflow-hidden rounded-lg border border-white/40 bg-white/40">
+                    <img
+                      src={src}
+                      alt={`Background ${index + 1}`}
+                      className="h-24 w-full object-cover"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveImage(index)}
+                      className="absolute right-1.5 top-1.5 rounded-full bg-black/60 p-1 text-white opacity-0 transition-opacity group-hover:opacity-100"
+                      aria-label="Remove image">
+                      <X className="size-3.5" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </section>

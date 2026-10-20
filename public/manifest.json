@@ -13,7 +13,7 @@
     "newtab": "index.html"
   },
 
-  "permissions": ["tabs", "storage"],
+  "permissions": ["tabs", "storage", "unlimitedStorage"],
 
   "background": {
     "service_worker": "background.js"
